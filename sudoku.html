@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="sudoku.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+    <script>
+        function big_digit_onmouseover(e) {
+            // console.log(e.target);
+            e.target.className = "big_digit_over";
+        }
+
+        function big_digit_onmouseout(e) {
+            // console.log(e.fromElement);
+            e.target.className = "big_digit";
+        }
+
+        function update() {
+            // white all small digit
+            blacked = document.getElementsByClassName("small_digit_black");
+            for (var i = blacked.length - 1; i >= 0; --i) {
+                blacked[i].className = 'small_digit';
+            }
+
+            for (var i = 0; i < 9; ++i) {
+                for (var j = 0; j < 9; ++j) {
+                    id = i.toString() + j.toString();
+                    digit = document.getElementById(id);
+                    big_digit = digit.children[1];
+                    if (big_digit.innerHTML != ' ') {
+                        val = Number(big_digit.innerHTML) - 1;
+                        // black current
+                        for (var k = 0; k < 9; ++k) {
+                            digit2 = digit.children[0].children[k];
+                            digit2.className = 'small_digit_black';
+                        }
+
+                        // black row
+                        for (var k = 0; k < 9; ++k) {
+                            digit2 = document.getElementById(i.toString() + k.toString());
+                            digit2.children[0].children[val].className = 'small_digit_black';
+                        }
+                        // black col
+                        for (var k = 0; k < 9; ++k) {
+                            digit2 = document.getElementById(k.toString() + j.toString());
+                            digit2.children[0].children[val].className = 'small_digit_black';
+                        }
+
+                        // black 3x3 box
+                        x = i - i % 3;
+                        y = j - j % 3;
+                        for (var p = 0; p < 3; ++p) {
+                            for (var q = 0; q < 3; ++q) {
+                                digit2 = document.getElementById((x + p).toString() + (y + q).toString());
+                                digit2.children[0].children[val].className = 'small_digit_black';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function onkeypress(e) {
+            if (e.key >= "1" && e.key <= "9" || e.key == ' ') {
+                digits = document.getElementsByClassName("big_digit_over");
+                if (digits.length > 0) {
+                    digit = digits[0];
+                    digit.innerHTML = e.key;
+                    update();
+                }
+            }
+        }
+
+        function create_digit(id) {
+            digit = document.createElement("div");
+            digit.className = 'digit';
+            div1 = document.createElement("div");
+            for (var i = 0; i < 9; ++i) {
+                small_digit = document.createElement("div");
+                small_digit.className = 'small_digit';
+                small_digit.innerHTML = i + 1;
+                div1.appendChild(small_digit);
+            }
+            digit.appendChild(div1);
+
+            div2 = document.createElement("div");
+            div2.className = "big_digit";
+            div2.innerHTML = " ";
+            div2.onmouseover = big_digit_onmouseover;
+            div2.onmouseout = big_digit_onmouseout;
+            digit.appendChild(div2);
+            digit.id = id;
+            x = Number(id[0]);
+            y = Number(id[1]);
+            if (x % 3 == 0){
+                digit.className = digit.className + " top";
+            }
+            if (x % 3 == 2){
+                digit.className = digit.className + " bottom";
+            }
+            if (y % 3 == 0){
+                digit.className = digit.className + " left";
+            }
+            if (y % 3 == 2){
+                digit.className = digit.className + " right";
+            }
+            return digit;
+        }
+
+        document.onkeypress = onkeypress;
+
+        grid = document.createElement("div");
+        grid.className = 'grid';
+        for (var i = 0; i < 9; ++i) {
+            row = document.createElement("div");
+            for (var j = 0; j < 9; ++j) {
+                id = i.toString() + j.toString();
+                digit = create_digit(id);
+                row.appendChild(digit);
+            }
+            grid.appendChild(row);
+        }
+        document.body.appendChild(grid);
+
+    </script>
+
+</body>
+
+</html>

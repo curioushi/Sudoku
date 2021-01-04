@@ -1,0 +1,65 @@
+.grid {
+    border: 3px solid;
+    display: table-cell;
+}
+
+.small_digit, .small_digit_black{
+    width:9px;
+    height:9px;
+    font-size: 12px;
+    border:0px solid;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.small_digit{
+    background-color: white;
+}
+
+.small_digit_black{
+    visibility: hidden;
+}
+
+.big_digit, .big_digit_over{
+    width:81px;
+    height:72px;
+    border:0px solid;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.big_digit{
+    background-color: white;
+}
+
+.big_digit_over{
+    background-color:gold;
+}
+
+.digit{
+    width:81px;
+    height:81px;
+    border:1px solid;
+    text-align:center;
+    font-size: xx-large;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.digit.top{
+    border-top: 3px solid;
+}
+
+.digit.bottom{
+    border-bottom: 3px solid;
+}
+
+.digit.left{
+    border-left: 3px solid;
+}
+
+.digit.right{
+    border-right: 3px solid;
+}
