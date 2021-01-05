@@ -29,6 +29,10 @@
     background-color: gray;
 }
 
+.small_digit.highlight{
+    background-color: gray;
+}
+
 .big_digit{
     width:81px;
     height:72px;
