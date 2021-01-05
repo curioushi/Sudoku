@@ -44,6 +44,10 @@
     background-color:gray;
 }
 
+.big_digit.highlight{
+    background-color: gray;
+}
+
 .digit{
     width:81px;
     height:81px;

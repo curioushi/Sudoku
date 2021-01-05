@@ -29,6 +29,24 @@
         function onmouseover(e) {
             ele = e.target;
             append_classname(ele, "over");
+            
+            // reset highlight
+            digits = document.getElementsByClassName("big_digit");
+            for (var i = 0; i < digits.length; ++i) {
+                remove_classname(digits[i], "highlight");
+            }
+
+            // highlight overed highlight
+            if (ele.className.indexOf("big_digit") != -1 && ele.innerHTML != " ") {
+                digits = document.getElementsByClassName("big_digit");
+                for (var i = 0; i < digits.length; ++i) {
+                    if (digits[i].innerHTML == ele.innerHTML) {
+                        if (digits[i] != ele) {
+                            append_classname(digits[i], "highlight");
+                        }
+                    }
+                }
+            }
         }
 
         function onmouseout(e) {
