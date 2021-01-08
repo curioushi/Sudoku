@@ -3,16 +3,23 @@
     display: table-cell;
 }
 
+.small_grid.hidden{
+    width: 0px;
+    height: 0px;
+    visibility: hidden;
+}
+
 .small_digit{
-    width:9px;
-    height:9px;
-    font-size: 12px;
+    width:27px;
+    height:27px;
+    font-size: 20px;
     border:0px solid;
     text-align: center;
     display: table-cell;
     vertical-align: middle;
     background-color: white;
     cursor: default;
+    color: gray;
 }
 
 .small_digit.black, .small_digit.black.remove{
@@ -20,22 +27,38 @@
     background-color: white;
 }
 
+.small_digit.red{
+    color: red;
+    font-weight:bolder;
+}
+
+.small_digit.blue {
+    color: blue;
+    font-weight:bolder;
+}
+
+.small_digit.green {
+    color: green;
+    font-weight:bolder;
+}
+
 .small_digit.remove{
-    color:lightgray;
-    background-color: lightgray;
+    color: #EEEEEE;
+    background-color: #EEEEEE;
 }
 
 .small_digit.over{
-    background-color: gray;
+    background-color: lightgreen;
 }
 
 .small_digit.highlight{
-    background-color: gray;
+    background-color: lightgreen;
 }
 
 .big_digit{
     width:81px;
-    height:72px;
+    height:81px;
+    font-size:50px;
     border:0px solid;
     text-align: center;
     display: table-cell;
@@ -45,11 +68,17 @@
 }
 
 .big_digit.over{
-    background-color:gray;
+    background-color: lightgreen;
 }
 
 .big_digit.highlight{
-    background-color: gray;
+    background-color: lightgreen;
+}
+
+.big_digit.hidden{
+    width: 0px;
+    height: 0px;
+    visibility: hidden;
 }
 
 .digit{

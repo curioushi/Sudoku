@@ -10,105 +10,73 @@
 <body>
 
     <script>
+        function inc_val(string, class_name) {
+            return string.indexOf(class_name) != -1;
+        }
+
         function append_classname(ele, new_class) {
-            classes = ele.className.split(" ");
-            if (classes.indexOf(new_class) == -1) {
+            var classes = ele.className.split(" ");
+            if (!inc_val(classes, new_class)) {
                 classes.push(new_class);
             }
             ele.className = classes.join(" ");
         }
 
         function remove_classname(ele, target_class) {
-            classes = ele.className.split(" ");
-            if (classes.indexOf(target_class) != -1) {
+            var classes = ele.className.split(" ");
+            if (inc_val(classes, target_class)) {
                 classes.splice(classes.indexOf(target_class), 1);
             }
             ele.className = classes.join(" ");
         }
 
         function onmouseover(e) {
-            ele = e.target;
+            var ele = e.target;
             append_classname(ele, "over");
-
-            // reset highlight
-            digits = document.getElementsByClassName("big_digit");
-            for (var i = 0; i < digits.length; ++i) {
-                remove_classname(digits[i], "highlight");
-            }
-            // highlight overed big_digit
-            if (ele.className.indexOf("big_digit") != -1 && ele.innerHTML != " ") {
-                digits = document.getElementsByClassName("big_digit");
-                for (var i = 0; i < digits.length; ++i) {
-                    if (digits[i].innerHTML == ele.innerHTML) {
-                        if (digits[i] != ele) {
-                            append_classname(digits[i], "highlight");
-                        }
-                    }
-                }
-            }
-
-
-            // reset highlight
-            digits = document.getElementsByClassName("small_digit");
-            for (var i = 0; i < digits.length; ++i) {
-                remove_classname(digits[i], "highlight");
-            }
-            // highlight overed small_digit
-            if (ele.className.indexOf("small_digit") != -1 && ele.className.indexOf("remove") == -1 && ele.className.indexOf("black") == -1) {
-                digits = document.getElementsByClassName("small_digit");
-                for (var i = 0; i < digits.length; ++i) {
-                    if (digits[i].innerHTML == ele.innerHTML) {
-                        if (digits[i].className.indexOf("remove") == -1 && digits[i].className.indexOf("black") == -1) {
-                            append_classname(digits[i], "highlight");
-                        }
-                    }
-                }
-            }
         }
 
         function onmouseout(e) {
-            ele = e.target;
+            var ele = e.target;
             remove_classname(ele, "over");
         }
 
         function update() {
             // white all small digit
-            blacked = document.getElementsByClassName("small_digit");
+            var blacked = document.getElementsByClassName("small_digit");
             for (var i = blacked.length - 1; i >= 0; --i) {
                 remove_classname(blacked[i], "black");
             }
 
             for (var i = 0; i < 9; ++i) {
                 for (var j = 0; j < 9; ++j) {
-                    id = i.toString() + j.toString();
-                    digit = document.getElementById(id);
-                    big_digit = digit.children[1];
+                    var id = i.toString() + j.toString();
+                    var digit = document.getElementById(id);
+                    var big_digit = digit.children[1];
                     if (big_digit.innerHTML != ' ') {
-                        val = Number(big_digit.innerHTML) - 1;
-                        // black current
-                        for (var k = 0; k < 9; ++k) {
-                            digit2 = digit.children[0].children[k];
-                            append_classname(digit2, "black");
-                        }
-
+                        var val = Number(big_digit.innerHTML) - 1;
+                        var row_id = Math.floor(val / 3);
+                        var col_id = val % 3;
                         // black row
                         for (var k = 0; k < 9; ++k) {
-                            digit2 = document.getElementById(i.toString() + k.toString());
-                            append_classname(digit2.children[0].children[val], "black");
+                            var digit2 = document.getElementById(i.toString() + k.toString());
+                            var small_grid = digit2.children[0];
+                            append_classname(small_grid.children[row_id].children[col_id], "black");
                         }
                         // black col
                         for (var k = 0; k < 9; ++k) {
-                            digit2 = document.getElementById(k.toString() + j.toString());
-                            append_classname(digit2.children[0].children[val], "black");
+                            var digit2 = document.getElementById(k.toString() + j.toString());
+                            var small_grid = digit2.children[0];
+                            append_classname(small_grid.children[row_id].children[col_id], "black");
                         }
 
                         // black 3x3 box
-                        x = i - i % 3;
-                        y = j - j % 3;
+                        var x = i - i % 3;
+                        var y = j - j % 3;
                         for (var p = 0; p < 3; ++p) {
                             for (var q = 0; q < 3; ++q) {
-                                digit2 = document.getElementById((x + p).toString() + (y + q).toString());
-                                append_classname(digit2.children[0].children[val], "black");
+                                var digit2 = document.getElementById((x + p).toString() + (y + q).toString());
+                                var small_grid = digit2.children[0];
+                                append_classname(small_grid.children[row_id].children[col_id], "black");
                             }
                         }
                     }
@@ -116,62 +84,180 @@
             }
         }
 
-        function onkeypress(e) {
-            if (e.key >= "1" && e.key <= "9" || e.key == ' ') {
-                digits = document.getElementsByClassName("over");
-                if (digits.length > 0) {
-                    digit = digits[0];
-                    if (digit.className.indexOf("big_digit") != -1) {
-                        digit.innerHTML = e.key;
-                        update();
-                    } else if (digit.className.indexOf("small_digit") != -1) {
-                        if (digit.className.indexOf("remove") != -1) {
-                            remove_classname(digit, "remove");
+        function onkeypress(event) {
+            if (event.key >= "1" && event.key <= "9" || event.key == ' ') {
+                var eles = document.getElementsByClassName("over");
+                if (eles.length == 0) return;
+                var ele = eles[0];
+
+                if (inc_val(ele.className, "big_digit")) {
+                    ele.innerHTML = event.key;
+                    update();
+                    if (event.key == ' ') {
+                        var small_grid = ele.parentNode.children[0];
+                        append_classname(ele, "hidden");
+                        remove_classname(small_grid, "hidden");
+                    }
+                } else if (inc_val(ele.className, "small_digit")) {
+                    if (event.key == ' ') { // add/remove note
+                        if (inc_val(ele.className, "remove")) {
+                            remove_classname(ele, "remove");
                         } else {
-                            append_classname(digit, "remove");
+                            append_classname(ele, "remove");
+                        }
+                    } else { // add number
+                        var digit = ele.parentNode.parentNode.parentNode;
+                        var small_grid = digit.children[0];
+                        var big_digit = digit.children[1];
+                        append_classname(small_grid, "hidden");
+                        remove_classname(big_digit, "hidden");
+                        big_digit.innerHTML = event.key;
+                        update();
+                    }
+                }
+            }
+
+            if (event.key == 'r' || event.key == 'g' || event.key == 'b' || event.key == 'x') {
+                var eles = document.getElementsByClassName("over");
+                if (eles.length == 0) return;
+                var ele = eles[0];
+                if (inc_val(ele.className, "small_digit") && !inc_val(ele.className, "remove") && !inc_val(ele.className, "black")) {
+                    if (event.key == 'r') {
+                        if (inc_val(ele.className, "red")) {
+                            remove_classname(ele, "red");
+                        } else {
+                            remove_classname(ele, "blue");
+                            remove_classname(ele, "green");
+                            append_classname(ele, "red");
+                        }
+                    } else if (event.key == 'g') {
+                        if (inc_val(ele.className, "green")) {
+                            remove_classname(ele, "green");
+                        } else {
+                            remove_classname(ele, "red");
+                            remove_classname(ele, "blue");
+                            append_classname(ele, "green");
+                        }
+                    } else if (event.key == 'b') {
+                        if (inc_val(ele.className, "blue")) {
+                            remove_classname(ele, "blue");
+                        } else {
+                            remove_classname(ele, "red");
+                            remove_classname(ele, "green");
+                            append_classname(ele, "blue");
+                        }
+                    } else if (event.key == 'x') {
+                        remove_classname(ele, "red");
+                        remove_classname(ele, "green");
+                        remove_classname(ele, "blue");
+                    }
+                }
+            }
+        }
+
+        function onkeydown(event) {
+            if (event.key == "Control") {
+                // get overed element
+                var eles = document.getElementsByClassName("over");
+                if (eles.length == 0) return;
+                var ele = eles[0];
+
+                // remove all highlight
+                var digits = document.getElementsByClassName("big_digit");
+                for (var i = 0; i < digits.length; ++i) {
+                    remove_classname(digits[i], "highlight");
+                }
+                var digits = document.getElementsByClassName("small_digit");
+                for (var i = 0; i < digits.length; ++i) {
+                    remove_classname(digits[i], "highlight");
+                }
+
+                // highlight overed big_digit
+                if (inc_val(ele.className, "big_digit") && ele.innerHTML != " ") {
+                    var digits = document.getElementsByClassName("big_digit");
+                    for (var i = 0; i < digits.length; ++i) {
+                        if (digits[i].innerHTML == ele.innerHTML) {
+                            if (digits[i] != ele) {
+                                append_classname(digits[i], "highlight");
+                            }
+                        }
+                    }
+                }
+
+                // highlight overed small_digit
+                if (inc_val(ele.className, "small_digit")) {
+                    var digits = document.getElementsByClassName("small_digit");
+                    for (var i = 0; i < digits.length; ++i) {
+                        if (digits[i].innerHTML == ele.innerHTML) {
+                            if (!inc_val(digits[i].className, "remove") && !inc_val(digits[i].className, "black")) {
+                                append_classname(digits[i], "highlight");
+                            }
                         }
                     }
                 }
             }
         }
 
+        function onkeyup(event) {
+            if (event.key == "Control") {
+                // remove all highlight
+                var digits = document.getElementsByClassName("big_digit");
+                for (var i = 0; i < digits.length; ++i) {
+                    remove_classname(digits[i], "highlight");
+                }
+                var digits = document.getElementsByClassName("small_digit");
+                for (var i = 0; i < digits.length; ++i) {
+                    remove_classname(digits[i], "highlight");
+                }
+            }
+
+        }
+
         function onmousedown(e) {
-            digits = document.getElementsByClassName("over");
-            if (digits.length > 0) {
-                digit = digits[0];
-                if (digit.className.indexOf("small_digit") != -1) {
-                    if (digit.className.indexOf("remove") != -1) {
-                        remove_classname(digit, "remove");
-                    } else {
-                        append_classname(digit, "remove");
-                    }
+            var eles = document.getElementsByClassName("over");
+            if (eles.length > 0) {
+                var ele = eles[0];
+                if (inc_val(ele.className, "small_digit") && !inc_val(ele.className, "remove") && !inc_val(ele.className, "black")) {
+                    var digit = ele.parentNode.parentNode.parentNode;
+                    var small_grid = digit.children[0];
+                    var big_digit = digit.children[1];
+                    append_classname(small_grid, "hidden");
+                    remove_classname(big_digit, "hidden");
+                    big_digit.innerHTML = ele.innerHTML;
+                    update();
                 }
             }
         }
 
         function create_digit(id) {
-            digit = document.createElement("div");
+            var digit = document.createElement("div");
             digit.className = 'digit';
-            div1 = document.createElement("div");
-            for (var i = 0; i < 9; ++i) {
-                small_digit = document.createElement("div");
-                small_digit.onmouseover = onmouseover;
-                small_digit.onmouseout = onmouseout;
-                small_digit.className = 'small_digit';
-                small_digit.innerHTML = i + 1;
-                div1.appendChild(small_digit);
+            var div1 = document.createElement("div");
+            div1.className = "small_grid";
+            for (var i = 0; i < 3; ++i) {
+                var row = document.createElement("div");
+                row.className = "small_row";
+                for (var j = 0; j < 3; ++j) {
+                    var small_digit = document.createElement("div");
+                    small_digit.onmouseover = onmouseover;
+                    small_digit.onmouseout = onmouseout;
+                    small_digit.className = 'small_digit';
+                    small_digit.innerHTML = (j + 1) + i * 3;
+                    row.appendChild(small_digit);
+                }
+                div1.appendChild(row);
             }
             digit.appendChild(div1);
 
-            div2 = document.createElement("div");
-            div2.className = "big_digit";
+            var div2 = document.createElement("div");
+            div2.className = "big_digit hidden";
             div2.innerHTML = " ";
             div2.onmouseover = onmouseover;
             div2.onmouseout = onmouseout;
             digit.appendChild(div2);
             digit.id = id;
-            x = Number(id[0]);
-            y = Number(id[1]);
+            var x = Number(id[0]);
+            var y = Number(id[1]);
             if (x % 3 == 0) {
                 digit.className = digit.className + " top";
             }
@@ -188,15 +274,17 @@
         }
 
         document.onkeypress = onkeypress;
+        document.onkeydown = onkeydown;
+        document.onkeyup = onkeyup;
         document.onmousedown = onmousedown;
 
-        grid = document.createElement("div");
+        var grid = document.createElement("div");
         grid.className = 'grid';
         for (var i = 0; i < 9; ++i) {
-            row = document.createElement("div");
+            var row = document.createElement("div");
             for (var j = 0; j < 9; ++j) {
-                id = i.toString() + j.toString();
-                digit = create_digit(id);
+                var id = i.toString() + j.toString();
+                var digit = create_digit(id);
                 row.appendChild(digit);
             }
             grid.appendChild(row);
